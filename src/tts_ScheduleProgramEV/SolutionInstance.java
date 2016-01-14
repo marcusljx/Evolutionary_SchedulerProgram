@@ -21,6 +21,9 @@ public class SolutionInstance {
                 do {
                     toAdd = pool.elementAt(RNG.nextInt(pool.size()));
                 } while(day.contains(toAdd));
+
+                // set working day in worker
+                toAdd.setWorkingDay(i);
                 day.add(toAdd);
             }
             Schedule.add(day);
@@ -39,5 +42,29 @@ public class SolutionInstance {
             Output += "\n";
         }
         return Output;
+    }
+
+    public int getFitness() {
+        int fitness;
+
+        // All days must have 1Male & 1F (MAJOR)
+        for(Vector<Worker> day : Schedule) {
+            boolean maleWorking = false;
+            boolean femaleWorking = false;
+            for(Worker W : day) {
+                if(W.getGender() == Worker.Gender.M) {
+                    maleWorking = true;
+                } else if(W.getGender() == Worker.Gender.F) {
+                    femaleWorking = true;
+                }
+            }
+            if(!(maleWorking && femaleWorking)) {
+                return -1;  // immediate failure
+            }
+        }
+
+
+
+        return fitness;
     }
 }
