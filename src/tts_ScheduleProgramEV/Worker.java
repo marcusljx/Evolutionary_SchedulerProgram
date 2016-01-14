@@ -11,20 +11,27 @@ public class Worker {
 
     public String[] DAY = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
-    private String w_name;
-    private Gender w_gender;
-    private boolean[] w_availableDays = new boolean[7];
-    private boolean[] w_workingDays = new boolean[7];
+    private String name;
+    private Gender gender;
+    private boolean[] availableDays = new boolean[7];
+    private boolean[] workingDays = new boolean[7];
 
     public Worker(String entry) {
         int bracePos = entry.indexOf("(");
-        w_name = entry.substring(0, bracePos);
+        name = entry.substring(0, bracePos);
 
-        w_gender = (entry.contains("(M)")) ? Gender.M : Gender.F;
+        gender = (entry.contains("(M)")) ? Gender.M : Gender.F;
 
         for(int i=0; i<DAY.length; i++) {
-            w_availableDays[i] = (entry.contains(DAY[i]));
+            availableDays[i] = (entry.contains(DAY[i]));
         }
+    }
+
+    public Worker(String newName, Gender newGender, boolean[] newAvailableDays, boolean[] newWorkingDays) {
+        name = newName;
+        gender = newGender;
+        availableDays = newAvailableDays.clone();
+        workingDays = newWorkingDays.clone();
     }
 
     public String booleanArr2String(boolean[] arr) {
@@ -37,6 +44,42 @@ public class Worker {
 
     @Override
     public String toString() {
-        return w_name + "\t(" + w_gender + ") \t[ " + booleanArr2String(w_availableDays) + "] -- " + booleanArr2String(w_workingDays);
+        return name + "\t(" + gender + ") \t[ " + booleanArr2String(availableDays) + "] -- " + booleanArr2String(workingDays);
+    }
+
+    //------------- getters
+    public String getName() {
+        return name;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public boolean[] getAvailableDays() {
+        return availableDays;
+    }
+
+    public boolean[] getWorkingDays() {
+        return workingDays;
+    }
+
+    public boolean isHappy() {
+        for(int i=0; i<workingDays.length; i++) {
+            if( (workingDays[i]) && (!availableDays[i]) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Worker clone() {
+        return new Worker(name, gender, availableDays, workingDays);
+    }
+
+    //------------- setters
+    public void setWorkingDay(int day) {
+        workingDays[day] = true;
     }
 }
