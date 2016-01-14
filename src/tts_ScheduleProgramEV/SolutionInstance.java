@@ -63,6 +63,8 @@ public class SolutionInstance {
             }
         }
 
+        // Total Number of Staff must be under limit
+
 
 
         return fitness;
