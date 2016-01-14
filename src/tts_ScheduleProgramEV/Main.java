@@ -40,10 +40,19 @@ public class Main {
 
     public static void main(String[] args) {
 	    String inputPath = args[0];
+
+        g_weekdaySlots = Integer.parseInt(args[1]);
+        g_weekendSlots = Integer.parseInt(args[2]);
+        g_hiringLimit = Integer.parseInt(args[3]);
+
         Vector<Worker> POOL = readInputFile(inputPath);
 
         for(Worker W : POOL) {
             System.out.println(W);
         }
+        System.out.println("==========================================");
+
+        SolutionInstance inst = new SolutionInstance(g_weekdaySlots, g_weekendSlots, POOL);
+        System.out.println(inst);
     }
 }

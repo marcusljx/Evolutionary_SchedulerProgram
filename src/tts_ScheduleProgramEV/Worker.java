@@ -9,7 +9,7 @@ public class Worker {
         M, F
     }
 
-    public String[] DAY = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    public static String[] DAY = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     private String name;
     private Gender gender;
@@ -34,7 +34,7 @@ public class Worker {
         workingDays = newWorkingDays.clone();
     }
 
-    public String booleanArr2String(boolean[] arr) {
+    public String booleanArr2String(boolean[] arr) {    // convert boolean array to string for output
         String result = "";
         for(boolean b : arr) {
                 result += b ? "1 " : "0 ";
@@ -43,7 +43,7 @@ public class Worker {
     }
 
     @Override
-    public String toString() {
+    public String toString() {  // for override in System.out
         return name + "\t(" + gender + ") \t[ " + booleanArr2String(availableDays) + "] -- " + booleanArr2String(workingDays);
     }
 
@@ -64,7 +64,7 @@ public class Worker {
         return workingDays;
     }
 
-    public boolean isHappy() {
+    public boolean isHappy() {  // score for happiness
         for(int i=0; i<workingDays.length; i++) {
             if( (workingDays[i]) && (!availableDays[i]) ) {
                 return false;
