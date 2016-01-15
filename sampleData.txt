@@ -1,0 +1,11 @@
+Name		Off Days
+========================
+Alpha(M)		Sunday, Tuesday
+Bravo(F)		Thursday, Saturday
+Charlie(M)		Monday, Friday
+Delta(F)		Wednesday, Monday
+Echo(M)		Thursday, Tuesday
+Foxtrot(F)		Monday, Friday
+Gollum(M)       Saturday, Sunday
+Hikari(F)       Sunday, Tuesday
+Iridian(M)      Wednesday, Monday
