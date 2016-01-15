@@ -15,6 +15,7 @@ public class Worker {
     private Gender gender;
     private boolean[] availableDays = new boolean[7];
     private boolean[] workingDays = new boolean[7];
+    private boolean working = false;
 
     public Worker(String entry) {
         int bracePos = entry.indexOf("(");
@@ -73,6 +74,10 @@ public class Worker {
         return true;
     }
 
+    public boolean isWorking() {
+        return working;
+    }
+
     @Override
     public Worker clone() {
         return new Worker(name, gender, availableDays, workingDays);
@@ -81,5 +86,9 @@ public class Worker {
     //------------- setters
     public void setWorkingDay(int day) {
         workingDays[day] = true;
+    }
+
+    public void setWorking(boolean value) {
+        working = value;
     }
 }
