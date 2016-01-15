@@ -53,24 +53,15 @@ public class Main {
         System.out.println("==========================================");
 
         SolutionInstance inst = new SolutionInstance(g_weekdaySlots, g_weekendSlots, g_hiringLimit, POOL);
-
-        int tempFitness;
-        int recurrence = 0;
-        double oldScore = 0.000001;
-        do {
-            inst.replanSchedule();
-            double score = inst.getFitness();
-
-            if(score > oldScore) {
-                recurrence=0;
-            } else {
-                recurrence++;
-            }
-
-            oldScore = score;
-        } while((oldScore < 1) && (recurrence < 10));
+        inst.repickHirePool();
+        inst.replanSchedule();
 
         System.out.println(inst);
         System.out.println("Score is : " + inst.getFitness());
+
+
+        SolutionInstance SI2 = inst.clone();
+        System.out.println(SI2);
+        System.out.println("Score is : " + SI2.getFitness());
     }
 }

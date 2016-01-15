@@ -24,7 +24,8 @@ public class Worker {
         gender = (entry.contains("(M)")) ? Gender.M : Gender.F;
 
         for(int i=0; i<DAY.length; i++) {
-            availableDays[i] = (entry.contains(DAY[i]));
+            availableDays[i] = (!entry.contains(DAY[i]));
+            workingDays[i] = false;
         }
     }
 
@@ -78,17 +79,23 @@ public class Worker {
         return working;
     }
 
+    public boolean isWorking(int day) {
+        return workingDays[day];
+    }
+
     @Override
     public Worker clone() {
         return new Worker(name, gender, availableDays, workingDays);
     }
 
+    public void clearWorkingDays() {
+        for(int i=0; i<workingDays.length; i++) {
+            workingDays[i] = false;
+        }
+    }
+
     //------------- setters
     public void setWorkingDay(int day) {
         workingDays[day] = true;
-    }
-
-    public void setWorking(boolean value) {
-        working = value;
     }
 }
