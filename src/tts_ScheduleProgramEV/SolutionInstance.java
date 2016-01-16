@@ -149,7 +149,7 @@ public class SolutionInstance {
         return fitness;
     }
 
-    // Mutators
+    // Mutator
     public void mutate_swapSlots(int n) { //swap a slot between two workers of same gender n times
         for(int i=0; i<n; i++) {
             Worker.Gender genderToPick = (RNG.nextBoolean()) ? Worker.Gender.M : Worker.Gender.F;
@@ -187,8 +187,8 @@ public class SolutionInstance {
             } while((day1==day2) || (TL==TR) || (BL==BR) || (TL==BL) || (TR==BR));
 
             //debug
-            System.out.println("GenderToSwap = "+genderToPick);
-            System.out.println("day1 = "+day1+"\nday2 = "+day2);
+//            System.out.println("GenderToSwap = "+genderToPick);
+//            System.out.println("day1 = "+day1+"\nday2 = "+day2);
 
             // swap duty days
             swap1.flipWorkingDay(day1);
@@ -196,5 +196,21 @@ public class SolutionInstance {
             swap2.flipWorkingDay(day1);
             swap2.flipWorkingDay(day2);
         }
+    }
+
+    // Crossover
+    public void crossover_swapWorker() {    // swaps out one worker from HIRE_POOL with a different one in WHOLE_POOL, keeping the working days
+        // pick a random worker in HIRE_POOL
+        Worker toRemove = HIRE_POOL.get(RNG.nextInt(HIRE_POOL.size()));
+
+        // pick a random worker in WHOLE_POOL that is not already in HIRE_POOL
+        Worker toAdd;
+        do {
+            toAdd = WHOLE_POOL.get(RNG.nextInt(WHOLE_POOL.size()));
+        } while(HIRE_POOL.contains(toAdd) || (toAdd.getGender()!=toRemove.getGender()));
+        toAdd.setWorkingDays(toRemove.getWorkingDays());
+
+        HIRE_POOL.remove(toRemove);
+        HIRE_POOL.add(toAdd);
     }
 }

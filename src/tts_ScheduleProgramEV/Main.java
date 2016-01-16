@@ -59,7 +59,8 @@ public class Main {
         inst.debug_HirePool();
         System.out.println("Score is : " + inst.getFitness());
 
-        inst.mutate_swapSlots(3);
+//        inst.mutate_swapSlots(3);
+        inst.crossover_swapWorker();
 
         inst.debug_HirePool();
         System.out.println("Score is : " + inst.getFitness());

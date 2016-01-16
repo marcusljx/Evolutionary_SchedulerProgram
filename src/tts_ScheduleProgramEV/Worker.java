@@ -33,7 +33,7 @@ public class Worker {
         name = newName;
         gender = newGender;
         availableDays = newAvailableDays.clone();
-        workingDays = newWorkingDays.clone();
+        workingDays = newWorkingDays;
     }
 
     public String booleanArr2String(boolean[] arr) {    // convert boolean array to string for output
@@ -98,6 +98,11 @@ public class Worker {
     public void setWorkingDay(int day) {
         workingDays[day] = true;
     }
+
+    public void setWorkingDays(boolean[] week) {
+        workingDays = week;
+    }
+
     public void flipWorkingDay(int day) {
         workingDays[day] = !workingDays[day];
     }
