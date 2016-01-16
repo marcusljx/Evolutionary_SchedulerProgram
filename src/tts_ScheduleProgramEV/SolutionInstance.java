@@ -32,10 +32,6 @@ public class SolutionInstance {
     }
 
     public void setHirePool(Vector<Worker> hirePool) {
-//        for(Worker W : hirePool) {
-//            Worker newW = W.clone();
-//            HIRE_POOL.add(newW);
-//        }
         HIRE_POOL = hirePool;
     }
 
@@ -112,6 +108,12 @@ public class SolutionInstance {
         return Output;
     }
 
+    public void debug_HirePool() {
+        for(Worker W : HIRE_POOL) {
+            System.out.println(W);
+        }
+    }
+
     @Override
     public SolutionInstance clone() {
         SolutionInstance SI= new SolutionInstance(SLOTS_WEEKDAY, SLOTS_WEEKEND, HIRE_MAX, WHOLE_POOL);
@@ -132,8 +134,6 @@ public class SolutionInstance {
 
 
         for(Worker W : HIRE_POOL) {
-            System.out.println(W);
-
             // Evaluate total unhappy worker-day slots
             for(int i=0; i<7; i++) {
                 if(W.isWorking(i)) {
@@ -159,12 +159,42 @@ public class SolutionInstance {
             while(swapping.size()<2) {
                 do {
                     workerToPick = HIRE_POOL.get(RNG.nextInt(HIRE_POOL.size()));
-                } while ((workerToPick.getGender() != genderToPick) && (!swapping.contains(workerToPick)));
+                } while ((workerToPick.getGender() != genderToPick) || (swapping.contains(workerToPick)));
                 swapping.add(workerToPick);
             }
+            Worker swap1 = swapping.get(0);
+            Worker swap2 = swapping.get(1);
 
-            // pick one day (XOR condition) and swap shifts
+            // find two days where shifts can be swapped (maintains MF condition)
 
+            int day1;
+            int day2;
+
+            boolean TL;
+            boolean TR;
+            boolean BL;
+            boolean BR;
+
+            do {
+                day1 = RNG.nextInt(7);
+                day2 = RNG.nextInt(7);
+
+                TL = swap1.isWorking(day1);
+                TR = swap1.isWorking(day2);
+                BL = swap2.isWorking(day1);
+                BR = swap2.isWorking(day2);
+
+            } while((day1==day2) || (TL==TR) || (BL==BR) || (TL==BL) || (TR==BR));
+
+            //debug
+            System.out.println("GenderToSwap = "+genderToPick);
+            System.out.println("day1 = "+day1+"\nday2 = "+day2);
+
+            // swap duty days
+            swap1.flipWorkingDay(day1);
+            swap1.flipWorkingDay(day2);
+            swap2.flipWorkingDay(day1);
+            swap2.flipWorkingDay(day2);
         }
     }
 }

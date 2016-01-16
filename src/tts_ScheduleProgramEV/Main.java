@@ -56,12 +56,12 @@ public class Main {
         inst.repickHirePool();
         inst.replanSchedule();
 
-        System.out.println(inst);
+        inst.debug_HirePool();
         System.out.println("Score is : " + inst.getFitness());
 
+        inst.mutate_swapSlots(3);
 
-        SolutionInstance SI2 = inst.clone();
-        System.out.println(SI2);
-        System.out.println("Score is : " + SI2.getFitness());
+        inst.debug_HirePool();
+        System.out.println("Score is : " + inst.getFitness());
     }
 }

@@ -98,4 +98,7 @@ public class Worker {
     public void setWorkingDay(int day) {
         workingDays[day] = true;
     }
+    public void flipWorkingDay(int day) {
+        workingDays[day] = !workingDays[day];
+    }
 }
