@@ -148,4 +148,23 @@ public class SolutionInstance {
 
         return fitness;
     }
+
+    // Mutators
+    public void mutate_swapSlots(int n) { //swap a slot between two workers of same gender n times
+        for(int i=0; i<n; i++) {
+            Worker.Gender genderToPick = (RNG.nextBoolean()) ? Worker.Gender.M : Worker.Gender.F;
+            Vector<Worker> swapping = new Vector<>();
+
+            Worker workerToPick;
+            while(swapping.size()<2) {
+                do {
+                    workerToPick = HIRE_POOL.get(RNG.nextInt(HIRE_POOL.size()));
+                } while ((workerToPick.getGender() != genderToPick) && (!swapping.contains(workerToPick)));
+                swapping.add(workerToPick);
+            }
+
+            // pick one day (XOR condition) and swap shifts
+
+        }
+    }
 }
