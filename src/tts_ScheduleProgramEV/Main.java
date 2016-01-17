@@ -13,16 +13,16 @@ import java.util.Random;
 import java.util.Vector;
 
 public class Main {
-    public Random RNG = new Random(System.currentTimeMillis());
+    public static Random RNG = new Random(System.currentTimeMillis());
     public static int g_weekdaySlots;
     public static int g_weekendSlots;
     public static int g_necessaryFemaleSlots;
     public static int g_necessaryMaleSlots;
     public static int g_hiringLimit;
 
-    public static Vector<Worker> readInputFile(String path) {
+    public static Pool readInputFile(String path) {
         String line;
-        Vector<Worker> inputPool = new Vector<>();
+        Pool inputPool = new Pool();
         try {
             FileReader FR = new FileReader(path);
             BufferedReader BR = new BufferedReader(FR);
@@ -54,9 +54,48 @@ public class Main {
     }
 
 
-    public static void runEvolution(Vector<SolutionInstance> Population, int generations) {
-        Collections.sort(Population);
-        printPopulation(Population);
+    public static SolutionInstance runEvolution(SolutionInstance SI, int generations) {
+        SolutionInstance bestInstance = SI.clone();
+        SolutionInstance kid;
+
+        int g = 0;
+        int rep = 0;
+        double bestFitness;
+        double oldBestFitness = bestInstance.getFitness();
+        do {
+            bestFitness = bestInstance.getFitness();
+            System.out.println("[g_" + g + "] \t" + bestFitness);
+            if(bestFitness > -1) break;
+
+            // crossover and mutate each instance and add to population
+            kid = bestInstance.clone();
+            kid.crossover_swapWorker();
+            kid.mutate_swapSlots(RNG.nextInt(3)+1);
+
+            // 20% of the time, mutate by scrambling a new timetable
+            if(RNG.nextDouble() < 0.2) {
+                kid.repickHirePool();
+                kid.replanSchedule();
+            }
+
+            // 50% of the time, mutate by balancing shifts
+           kid.mutate_giveShift();
+
+            // Take only the top 10 of the population for the next generation
+            if(bestFitness < kid.getFitness()) {
+                bestInstance = kid;
+            }
+
+            g++;
+            if(bestFitness == oldBestFitness) {
+                rep++;
+            } else {
+                oldBestFitness = bestFitness;
+                rep = 0;
+            }
+
+        } while( (g < generations) && (rep < 1000) );
+        return bestInstance;
     }
 
 
@@ -68,7 +107,7 @@ public class Main {
         g_weekendSlots = Integer.parseInt(args[2]);
         g_hiringLimit = Integer.parseInt(args[3]);
 
-        Vector<Worker> POOL = readInputFile(inputPath);
+        Pool POOL = readInputFile(inputPath);
 
         System.out.println("WHOLE_POOL");
         for(Worker W : POOL) {
@@ -77,16 +116,23 @@ public class Main {
         System.out.println("==========================================");
 
         // init population
-        Vector<SolutionInstance> Population = new Vector<>();
-        for(int i=0; i<10; i++) {
-            SolutionInstance inst = new SolutionInstance(g_weekdaySlots, g_weekendSlots, g_hiringLimit, POOL);
-            inst.repickHirePool();
-            inst.replanSchedule();
+//        Vector<SolutionInstance> Population = new Vector<>();
+//        for(int i=0; i<10; i++) {
+//            SolutionInstance inst = new SolutionInstance(g_weekdaySlots, g_weekendSlots, g_hiringLimit, POOL);
+//            inst.repickHirePool();
+//            inst.replanSchedule();
+//
+//            Population.add(inst);
+//        }
+        SolutionInstance inst = new SolutionInstance(g_weekdaySlots,g_weekendSlots,g_hiringLimit,POOL);
+        inst.repickHirePool();
+        inst.replanSchedule();
 
-            Population.add(inst);
-        }
 
         // RUN
-        runEvolution(Population, 10);
+        SolutionInstance result = runEvolution(inst, 10000);
+        System.out.println("Best Result [" + result.getFitness() + "]:\n" + result);
+        result.debug_HirePool();
+
     }
 }
