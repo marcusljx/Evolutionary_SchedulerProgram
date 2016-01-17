@@ -33,7 +33,7 @@ public class Worker {
         name = newName;
         gender = newGender;
         availableDays = newAvailableDays.clone();
-        workingDays = newWorkingDays;
+        workingDays = newWorkingDays.clone();
     }
 
     public String booleanArr2String(boolean[] arr) {    // convert boolean array to string for output
@@ -64,6 +64,14 @@ public class Worker {
 
     public boolean[] getWorkingDays() {
         return workingDays;
+    }
+
+    public int getNumberOfWorkingDays() {
+        int result=0;
+        for(boolean b : workingDays) {
+            result += b ? 1 : 0;
+        }
+        return result;
     }
 
     public boolean isHappy() {  // score for happiness

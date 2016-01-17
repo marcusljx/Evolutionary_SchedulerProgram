@@ -10,17 +10,17 @@ import java.util.Vector;
 public class SolutionInstance implements Comparable<SolutionInstance> {
     Random RNG = new Random(System.nanoTime());
 
-    private Vector<Worker> WHOLE_POOL = null;
-    private Vector<Worker> HIRE_POOL = new Vector<>();
+    private Pool WHOLE_POOL = null;
+    private Pool HIRE_POOL = new Pool();
     private int HIRE_MAX;
     private int SLOTS_WEEKDAY;
     private int SLOTS_WEEKEND;
 
-    public SolutionInstance(int weekdaySlots, int weekendSlots, int maximumHires, Vector<Worker> pool) {
+    public SolutionInstance(int weekdaySlots, int weekendSlots, int maximumHires, Pool pool) {
         HIRE_MAX = maximumHires;
         SLOTS_WEEKDAY = weekdaySlots;
         SLOTS_WEEKEND = weekendSlots;
-        WHOLE_POOL = (Vector<Worker>) pool.clone();
+        WHOLE_POOL = pool.clone();
     }
 
 
@@ -32,8 +32,8 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
         }
     }
 
-    public void setHirePool(Vector<Worker> hirePool) {
-        HIRE_POOL = hirePool;
+    public void setHirePool(Pool hirePool) {
+        HIRE_POOL = hirePool.clone();
     }
 
     public void repickHirePool() {
@@ -43,7 +43,7 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
         while(HIRE_POOL.size() < HIRE_MAX) {
             Worker.Gender genderToPick = (gotMale) ? Worker.Gender.F : Worker.Gender.M;
             do {
-                toHire = WHOLE_POOL.elementAt(RNG.nextInt(WHOLE_POOL.size()));
+                toHire = WHOLE_POOL.get(RNG.nextInt(WHOLE_POOL.size()));
             } while( (HIRE_POOL.contains(toHire)) || (toHire.getGender()!=genderToPick) );
 
             gotMale = (toHire.getGender() == Worker.Gender.M);
@@ -71,11 +71,11 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
                 if(gotMale ^ gotFemale) {   // if one is false while the other is true
                     Worker.Gender genderToPick = (gotFemale) ? Worker.Gender.M : Worker.Gender.F;
                     do {
-                        toAdd = HIRE_POOL.elementAt(RNG.nextInt(HIRE_POOL.size()));
+                        toAdd = HIRE_POOL.get(RNG.nextInt(HIRE_POOL.size()));
                     } while((toAdd.isWorking(i)) ||  (toAdd.getGender() != genderToPick));
                 } else {
                     do {
-                        toAdd = HIRE_POOL.elementAt(RNG.nextInt(HIRE_POOL.size()));
+                        toAdd = HIRE_POOL.get(RNG.nextInt(HIRE_POOL.size()));
                     } while(toAdd.isWorking(i));
                 }
 
@@ -139,7 +139,7 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
         boolean[] maleWorkers = new boolean[7];
         boolean[] femaleWorkers = new boolean[7];
 
-        int UNHAPPY = 1;
+        int UNHAPPY = 0;
 
 
         for(Worker W : HIRE_POOL) {
@@ -153,7 +153,7 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
 
 //        System.out.println("UNHAPPY = " + UNHAPPY);
         // overall score based on all parameters
-        fitness =  1 / (1 + Math.pow(UNHAPPY, 2));
+        fitness =  -UNHAPPY;
 
         return fitness;
     }
@@ -184,6 +184,7 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
             boolean BL;
             boolean BR;
 
+            int reps = 0;
             do {
                 day1 = RNG.nextInt(7);
                 day2 = RNG.nextInt(7);
@@ -193,7 +194,9 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
                 BL = swap2.isWorking(day1);
                 BR = swap2.isWorking(day2);
 
-            } while((day1==day2) || (TL==TR) || (BL==BR) || (TL==BL) || (TR==BR));
+                reps++;
+
+            } while(((day1==day2) || (TL==TR) || (BL==BR) || (TL==BL) || (TR==BR)) && (reps < 100));
 
             //debug
 //            System.out.println("GenderToSwap = "+genderToPick);
@@ -205,6 +208,48 @@ public class SolutionInstance implements Comparable<SolutionInstance> {
             swap2.flipWorkingDay(day1);
             swap2.flipWorkingDay(day2);
         }
+    }
+
+    public void mutate_giveShift() {    // for balancing shifts
+        Worker.Gender genderToPick = (RNG.nextBoolean()) ? Worker.Gender.M : Worker.Gender.F;
+        Vector<Worker> swapping = new Vector<>();
+
+        Worker workerToPick;
+        while(swapping.size()<2) {
+            do {
+                workerToPick = HIRE_POOL.get(RNG.nextInt(HIRE_POOL.size()));
+            } while ((workerToPick.getGender() != genderToPick) || (swapping.contains(workerToPick)));
+            swapping.add(workerToPick);
+        }
+
+        Worker less;
+        Worker more;
+
+        // find who has unbalanced number of shifts
+        if(swapping.get(0).getNumberOfWorkingDays() < swapping.get(1).getNumberOfWorkingDays()) {
+            less = swapping.get(0);
+            more = swapping.get(1);
+        } else if(swapping.get(0).getNumberOfWorkingDays() > swapping.get(1).getNumberOfWorkingDays()){
+            less = swapping.get(1);
+            more = swapping.get(0);
+        } else {
+            less = null;
+            more = null;
+        }
+
+        // balance it out
+        if((less!=null)&&(more!=null)) {
+            int dayToPick;
+            int rep = 0;
+            do {
+                dayToPick = RNG.nextInt(7);
+                rep++;
+            } while(!( (more.isWorking(dayToPick)) && (!less.isWorking(dayToPick)) ) && rep < 10);
+
+            less.flipWorkingDay(dayToPick);
+            more.flipWorkingDay(dayToPick);
+        }
+
     }
 
     // Crossover
