@@ -1,13 +1,14 @@
 package tts_ScheduleProgramEV;
 
+import java.util.Comparator;
 import java.util.Random;
 import java.util.Vector;
 
 /**
  * Created by xjlm on 1/14/16.
  */
-public class SolutionInstance {
-    Random RNG = new Random(System.currentTimeMillis());
+public class SolutionInstance implements Comparable<SolutionInstance> {
+    Random RNG = new Random(System.nanoTime());
 
     private Vector<Worker> WHOLE_POOL = null;
     private Vector<Worker> HIRE_POOL = new Vector<>();
@@ -122,6 +123,14 @@ public class SolutionInstance {
         return SI;
     }
 
+    public String getCodeHash() {
+        String result = "";
+        for(Worker W : HIRE_POOL) {
+            result += W.getName().substring(0,1);
+        }
+        return result;
+    }
+
     public double getFitness() {
         double fitness;
 
@@ -142,7 +151,7 @@ public class SolutionInstance {
             }
         }
 
-        System.out.println("UNHAPPY = " + UNHAPPY);
+//        System.out.println("UNHAPPY = " + UNHAPPY);
         // overall score based on all parameters
         fitness =  1 / (1 + Math.pow(UNHAPPY, 2));
 
@@ -212,5 +221,13 @@ public class SolutionInstance {
 
         HIRE_POOL.remove(toRemove);
         HIRE_POOL.add(toAdd);
+    }
+
+    @Override
+    public int compareTo(SolutionInstance o) {
+        if(getFitness() < o.getFitness()) return -1;
+        if(getFitness() > o.getFitness()) return 1;
+
+        return 0;
     }
 }

@@ -1,12 +1,19 @@
 package tts_ScheduleProgramEV;
 
+import com.sun.org.apache.bcel.internal.generic.POP;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Random;
 import java.util.Vector;
 
 public class Main {
+    public Random RNG = new Random(System.currentTimeMillis());
     public static int g_weekdaySlots;
     public static int g_weekendSlots;
     public static int g_necessaryFemaleSlots;
@@ -38,6 +45,22 @@ public class Main {
         return inputPool;
     }
 
+    public static void printPopulation(Vector<SolutionInstance> Population) {
+        int i=0;
+        for(SolutionInstance SI : Population) {
+            System.out.println("["+SI.getCodeHash()+"] \t("+SI.getFitness()+")" );
+            i++;
+        }
+    }
+
+
+    public static void runEvolution(Vector<SolutionInstance> Population, int generations) {
+        Collections.sort(Population);
+        printPopulation(Population);
+    }
+
+
+
     public static void main(String[] args) {
 	    String inputPath = args[0];
 
@@ -47,22 +70,23 @@ public class Main {
 
         Vector<Worker> POOL = readInputFile(inputPath);
 
+        System.out.println("WHOLE_POOL");
         for(Worker W : POOL) {
             System.out.println(W);
         }
         System.out.println("==========================================");
 
-        SolutionInstance inst = new SolutionInstance(g_weekdaySlots, g_weekendSlots, g_hiringLimit, POOL);
-        inst.repickHirePool();
-        inst.replanSchedule();
+        // init population
+        Vector<SolutionInstance> Population = new Vector<>();
+        for(int i=0; i<10; i++) {
+            SolutionInstance inst = new SolutionInstance(g_weekdaySlots, g_weekendSlots, g_hiringLimit, POOL);
+            inst.repickHirePool();
+            inst.replanSchedule();
 
-        inst.debug_HirePool();
-        System.out.println("Score is : " + inst.getFitness());
+            Population.add(inst);
+        }
 
-//        inst.mutate_swapSlots(3);
-        inst.crossover_swapWorker();
-
-        inst.debug_HirePool();
-        System.out.println("Score is : " + inst.getFitness());
+        // RUN
+        runEvolution(Population, 10);
     }
 }
