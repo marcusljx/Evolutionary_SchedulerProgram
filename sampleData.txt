@@ -9,3 +9,7 @@ Foxtrot(F)		Monday, Friday
 Gollum(M)       Saturday, Sunday
 Hikari(F)       Sunday, Tuesday
 Iridian(M)      Wednesday, Monday
+Jesalyn(F)      Tuesday, Thursday
+Kyle(M)         Monday, Saturday
+Lydia(F)        Thursday, Wednesday
+Marcus(M)       Friday, Wednesday
